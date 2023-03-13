@@ -1,0 +1,39 @@
+* {
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 0;
+}
+
+.content {
+    background-color: transparent;
+    height: 720px;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 1280px;
+    z-index: 9999;
+}
+
+.content .timer {
+    background-color: #8d2603;
+    height: 20px;
+    margin: 0 auto;
+}
+
+.content .info {
+    bottom: 0;
+    color: #8d2603;
+    font-size: 20px;
+    font-weight: bold;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+
+canvas {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
