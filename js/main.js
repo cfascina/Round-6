@@ -29,11 +29,10 @@ class Game {
     setTimer() {
         this.timer = setTimeout(function() {
             isGameOn = false;
-            console.log('Time out!');
+            console.log('Time out! You died.');
         }, timeLimit * 1000);
     }
     start() {
-        console.log('game started');
         isGameOn = true;
         this.setTimer();
     }
@@ -82,6 +81,54 @@ class Doll {
     }
 }
 
+class Player {
+    constructor() {
+        let loader = new THREE.TextureLoader();
+        let material = new THREE.MeshLambertMaterial({map: loader.load('../images/player.png'), transparent: true});
+        let geometry = new THREE.PlaneGeometry(1, 1);
+        let player = new THREE.Mesh(geometry, material);  
+        
+        this.player = player;
+        this.positionStart = -4.5;
+        this.positionEnd = this.positionStart * -1;
+        this.velocity = 0;
+        this.positionCurrent;
+
+        this.reset();
+        scene.add(player);
+    }
+    move() {
+        this.velocity = .005;
+    }
+    stop() {
+        this.velocity = 0;
+    }
+    reset() {
+        this.player.position.set(this.positionStart, -2, 1);
+        this.positionCurrent = this.positionStart;
+    }
+    update() {
+        if(!isGameOn)
+            return;
+        
+        if(this.velocity > 0 && isDollFacingForward) {
+            console.log('You died.');
+            isGameOn = false;
+            this.stop();
+        }
+        if(this.positionCurrent >= this.positionEnd) {
+            console.log('You are safe (for now).');
+            isGameOn = false;
+            this.stop();
+        }
+    }
+    check() {
+        this.update();
+        this.positionCurrent += this.velocity;
+        this.player.position.x = this.positionCurrent;
+    }
+}
+
 class Timer {
     constructor() {
         let timerEl = document.querySelector('.timer');
@@ -105,8 +152,9 @@ let isGameOn = false;
 let isDollFacingForward = true;
 
 let game = new Game();
-let doll = new Doll();
 let timer = new Timer();
+let doll = new Doll();
+let player = new Player();
 
 // Game Controls
 window.addEventListener('keydown', (e) => {
@@ -114,17 +162,21 @@ window.addEventListener('keydown', (e) => {
         game.start();
         timer.start(); 
         doll.start();
+        player.reset();
     }
-    if(e.key == 'ArrowRight') {
-        console.log('player died.');
-        isGameOn = false;
-    }
+    if(e.code == 'ArrowRight' && isGameOn)
+        player.move();
+});
+window.addEventListener('keyup', (e) => {
+    if(e.code == 'ArrowRight' && isGameOn)
+        player.stop();
 });
 
 // Renders Scene Repeatedly
 function animate(){
     renderer.render(scene, camera);
     game.check();
+    player.check();
     requestAnimationFrame(animate);
 }
 
