@@ -17,6 +17,7 @@
 
 .content .timer {
     background-color: #8d2603;
+    border: none;
     height: 20px;
     margin: 0 auto;
 }

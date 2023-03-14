@@ -38,8 +38,10 @@ class Game {
         this.setTimer();
     }
     check() {
-        if(!isGameOn)
+        if(!isGameOn) {
             clearTimeout(this.timer);
+            timer.pause();
+        }
     }
 }
 
@@ -80,6 +82,23 @@ class Doll {
     }
 }
 
+class Timer {
+    constructor() {
+        let timerEl = document.querySelector('.timer');
+        this.timer = new TimelineMax()
+       
+        this.timer.to(timerEl, timeLimit, {width: 0, ease: 'none'});
+        this.timer.pause();
+    }
+    start() {
+        this.timer.restart();
+        this.timer.play();
+    }
+    pause() {
+        this.timer.pause();
+    }
+}
+
 // Game Variables
 let timeLimit = 15;
 let isGameOn = false;
@@ -87,13 +106,14 @@ let isDollFacingForward = true;
 
 let game = new Game();
 let doll = new Doll();
+let timer = new Timer();
 
 // Game Controls
 window.addEventListener('keydown', (e) => {
     if(e.code == 'Space' && !isGameOn) {
         game.start();
-        doll.faceBackward(); 
-        doll.start();   
+        timer.start(); 
+        doll.start();
     }
     if(e.key == 'ArrowRight') {
         console.log('player died.');
