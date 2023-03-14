@@ -1,6 +1,7 @@
 // Script Constants
 const canvasWidth = 1280;
 const canvasHeight = 720;
+const gameStatus = document.querySelector('.game-status');
 
 // THREE Constants
 const scene = new THREE.Scene();
@@ -8,7 +9,7 @@ const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, .1, 1
 const renderer = new THREE.WebGLRenderer();
 const light = new THREE.AmbientLight(0xffffff);
 
-// Initial Definitions
+// THREE Definitions
 camera.position.z = 5;
 scene.add(light);
 renderer.setSize(canvasWidth, canvasHeight);
@@ -29,7 +30,7 @@ class Game {
     setTimer() {
         this.timer = setTimeout(function() {
             isGameOn = false;
-            console.log('Time out! You died.');
+            gameStatus.innerText = 'Time out! You died.';
         }, timeLimit * 1000);
     }
     start() {
@@ -112,14 +113,14 @@ class Player {
             return;
         
         if(this.velocity > 0 && isDollFacingForward) {
-            console.log('You died.');
             isGameOn = false;
             this.stop();
+            gameStatus.innerText = 'I got you! You died.';
         }
         if(this.positionCurrent >= this.positionEnd) {
-            console.log('You are safe (for now).');
             isGameOn = false;
             this.stop();
+            gameStatus.innerText = 'You are safe (for now).';
         }
     }
     check() {
@@ -163,6 +164,7 @@ window.addEventListener('keydown', (e) => {
         timer.start(); 
         doll.start();
         player.reset();
+        gameStatus.innerText = 'Go!';
     }
     if(e.code == 'ArrowRight' && isGameOn)
         player.move();

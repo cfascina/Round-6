@@ -1,9 +1,9 @@
 * {
+    background-color: #b7c3d2;
     font-family: 'Courier New', Courier, monospace;
     margin: 0;
     padding: 0;
 }
-
 .content {
     background-color: transparent;
     height: 720px;
@@ -14,15 +14,21 @@
     width: 1280px;
     z-index: 9999;
 }
-
+.content .game-controls {
+    color: #010101;
+    font-size: 18px;
+    line-height: 18px;
+    position: absolute;
+    text-align: center ;
+    top: 0;
+    width: 100%;
+}
 .content .timer {
     background-color: #8d2603;
-    border: none;
-    height: 20px;
-    margin: 0 auto;
+    height: 30px;
+    margin: 32px auto 0;
 }
-
-.content .info {
+.content .game-status {
     bottom: 0;
     color: #8d2603;
     font-size: 20px;
@@ -31,7 +37,6 @@
     text-align: center;
     width: 100%;
 }
-
 canvas {
     left: 50%;
     position: absolute;
