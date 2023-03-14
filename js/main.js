@@ -16,16 +16,20 @@ renderer.setClearColor(0xb7c3d2, 1);
 
 document.body.appendChild(renderer.domElement);
 
+// Helper Functions
+async function setDelay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 // Classes
 class Game {
     constructor() {
         this.timer;
     }
     setTimer() {
-        console.log('starting timer...');
         this.timer = setTimeout(function() {
-            console.log('Time out!');
             isGameOn = false;
+            console.log('Time out!');
         }, timeLimit * 1000);
     }
     start() {
@@ -34,30 +38,70 @@ class Game {
         this.setTimer();
     }
     check() {
-        if(!isGameOn) {
+        if(!isGameOn)
             clearTimeout(this.timer);
+    }
+}
+
+class Doll {
+    constructor() {
+        let loader = new THREE.GLTFLoader();
+        
+        loader.load('../doll/scene.gltf', (gltf) => {
+            gltf.scene.scale.set(.35, .35, .35 );
+            gltf.scene.position.set(0, -.75, 0);
+            this.doll = gltf.scene;
+            
+            scene.add(gltf.scene);
+        });
+    }
+    faceBackward() {
+        gsap.to(this.doll.rotation, {duration: .5, y: -3.15});
+        setTimeout(() => isDollFacingForward = false, 500);
+    }
+    faceForward() {
+        gsap.to(this.doll.rotation, {duration: .5, y: 0});
+        setTimeout(() => isDollFacingForward = true, 500);
+    }
+    async start() {
+        let rotationDelay = Math.random() * 1000 + 1500;
+        
+        if(isGameOn) {
+            this.faceBackward();
+            await setDelay(rotationDelay);
+        }
+        if(isGameOn) {
+            this.faceForward();
+            await setDelay(rotationDelay);
+        }
+        if(isGameOn) {
+            this.start();
         }
     }
 }
 
 // Game Variables
+let timeLimit = 15;
 let isGameOn = false;
-let timeLimit = 5;
+let isDollFacingForward = true;
 
 let game = new Game();
+let doll = new Doll();
 
 // Game Controls
 window.addEventListener('keydown', (e) => {
-    if(e.code == 'Space' && !isGameOn)
+    if(e.code == 'Space' && !isGameOn) {
         game.start();
-
+        doll.faceBackward(); 
+        doll.start();   
+    }
     if(e.key == 'ArrowRight') {
         console.log('player died.');
         isGameOn = false;
     }
 });
 
-// Render the scene repeatedly
+// Renders Scene Repeatedly
 function animate(){
     renderer.render(scene, camera);
     game.check();
