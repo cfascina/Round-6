@@ -1,6 +1,8 @@
 // Script Constants
 const canvasWidth = 1280;
 const canvasHeight = 720;
+positionStart = -4.5;
+positionEnd = positionStart * -1;
 const gameStatus = document.querySelector('.game-status');
 const musicGame = new Audio('../audio/game.mp3')
 const musicWin = new Audio('../audio/win.mp3')
@@ -24,16 +26,33 @@ document.body.appendChild(renderer.domElement);
 async function setDelay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
-
 function stopGameMusic() {
     musicGame.pause();
     musicGame.currentTime = 0;
+}
+function createGeometry(size, positionX = 0, positionY = 0, positionZ = 0, colorCode = 0xfbc851) {
+    let geometry = new THREE.BoxGeometry(size.width, size.height, 1);
+    let material = new THREE.MeshBasicMaterial({color: colorCode});
+    let cube = new THREE.Mesh(geometry, material);
+
+    cube.position.x = positionX;
+    cube.position.y = positionY;
+    cube.position.z = positionZ;
+    
+    return cube;
 }
 
 // Classes
 class Game {
     constructor() {
-        this.timer;
+        this.createTrack();
+    }
+    createTrack() {
+        let wallBack = createGeometry({width: 14, height: 6}, 0, -.2, -2, 0xe5a716);
+        let wallLeft = createGeometry({width: .2, height: 5.08}, positionStart - 1.4, -.18);
+        let wallRight = createGeometry({width: .2, height: 5.08}, positionEnd + 1.4, -.18);
+
+        scene.add(wallBack, wallLeft, wallRight);
     }
     setTimer() {
         this.timer = setTimeout(function() {
@@ -76,7 +95,7 @@ class Doll {
         
         loader.load('../doll/scene.gltf', (gltf) => {
             gltf.scene.scale.set(.35, .35, .35 );
-            gltf.scene.position.set(0, -.75, 0);
+            gltf.scene.position.set(0, -1, 0);
             this.doll = gltf.scene;
             
             scene.add(gltf.scene);
@@ -115,8 +134,6 @@ class Player {
         let player = new THREE.Mesh(geometry, material);  
         
         this.player = player;
-        this.positionStart = -4.5;
-        this.positionEnd = this.positionStart * -1;
         this.velocity = 0;
         this.positionCurrent;
 
@@ -130,8 +147,8 @@ class Player {
         this.velocity = 0;
     }
     reset() {
-        this.player.position.set(this.positionStart, -2, 1);
-        this.positionCurrent = this.positionStart;
+        this.player.position.set(positionStart, -2, 1);
+        this.positionCurrent = positionStart;
     }
     update() {
         if(!isGameOn)
@@ -144,7 +161,7 @@ class Player {
             stopGameMusic();
             musicLose.play();
         }
-        if(this.positionCurrent >= this.positionEnd) {
+        if(this.positionCurrent >= positionEnd) {
             isGameOn = false;
             this.stop();
             gameStatus.innerText = 'You are safe (for now).';
