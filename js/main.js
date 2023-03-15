@@ -43,6 +43,20 @@ class Game {
             timer.pause();
         }
     }
+    async countDown() {
+        gameStatus.innerText = 'Starting in 3...';
+        await setDelay(1000);
+        gameStatus.innerText = 'Starting in 2...';
+        await setDelay(1000);
+        gameStatus.innerText = 'Starting in 1...';
+        await setDelay(1000);
+    
+        this.start();
+        timer.start(); 
+        doll.start();
+        player.reset();
+        gameStatus.innerText = 'Go!';
+    }
 }
 
 class Doll {
@@ -59,7 +73,7 @@ class Doll {
     }
     faceBackward() {
         gsap.to(this.doll.rotation, {duration: .5, y: -3.15});
-        setTimeout(() => isDollFacingForward = false, 500);
+        isDollFacingForward = false;
     }
     faceForward() {
         gsap.to(this.doll.rotation, {duration: .5, y: 0});
@@ -145,10 +159,14 @@ class Timer {
     pause() {
         this.timer.pause();
     }
+    reset() {
+        this.timer.restart();
+        this.pause();
+    }
 }
 
 // Game Variables
-let timeLimit = 15;
+let timeLimit = 30;
 let isGameOn = false;
 let isDollFacingForward = true;
 
@@ -160,11 +178,9 @@ let player = new Player();
 // Game Controls
 window.addEventListener('keydown', (e) => {
     if(e.code == 'Space' && !isGameOn) {
-        game.start();
-        timer.start(); 
-        doll.start();
+        timer.reset();
         player.reset();
-        gameStatus.innerText = 'Go!';
+        game.countDown();
     }
     if(e.code == 'ArrowRight' && isGameOn)
         player.move();
