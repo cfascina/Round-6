@@ -2,6 +2,9 @@
 const canvasWidth = 1280;
 const canvasHeight = 720;
 const gameStatus = document.querySelector('.game-status');
+const musicGame = new Audio('../audio/game.mp3')
+const musicWin = new Audio('../audio/win.mp3')
+const musicLose = new Audio('../audio/lose.mp3')
 
 // THREE Constants
 const scene = new THREE.Scene();
@@ -22,6 +25,11 @@ async function setDelay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+function stopGameMusic() {
+    musicGame.pause();
+    musicGame.currentTime = 0;
+}
+
 // Classes
 class Game {
     constructor() {
@@ -31,6 +39,8 @@ class Game {
         this.timer = setTimeout(function() {
             isGameOn = false;
             gameStatus.innerText = 'Time out! You died.';
+            stopGameMusic();
+            musicLose.play();
         }, timeLimit * 1000);
     }
     start() {
@@ -55,6 +65,7 @@ class Game {
         timer.start(); 
         doll.start();
         player.reset();
+        musicGame.play();
         gameStatus.innerText = 'Go!';
     }
 }
@@ -130,11 +141,15 @@ class Player {
             isGameOn = false;
             this.stop();
             gameStatus.innerText = 'I got you! You died.';
+            stopGameMusic();
+            musicLose.play();
         }
         if(this.positionCurrent >= this.positionEnd) {
             isGameOn = false;
             this.stop();
             gameStatus.innerText = 'You are safe (for now).';
+            stopGameMusic();
+            musicWin.play();
         }
     }
     check() {
